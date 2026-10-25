@@ -31,16 +31,16 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent) {
     button_row->addStretch();
 
     // stack list, buttons, and status inside the box
-    auto* workspace_layout = new QVBoxLayout(workspace_box);
+    auto* workspace_layout = new QVBoxLayout(workspace_bx);
     workspace_layout->addWidget(document_list_);
-    workspace_layout->addWidget(button_row);
+    workspace_layout->addLayout(button_row);
     workspace_layout->addWidget(corpus_status_label_);
 
     // right box: selected document
     auto* selected_doc_bx = new QGroupBox("Selected Document", this);
 
     // Title label
-    document_title_label = new QLabel(selected_doc_bx);
+    document_title_label_ = new QLabel(selected_doc_bx);
     QFont title_font = document_title_label_->font();
     title_font.setBold(true);
     document_title_label_->setFont(title_font);

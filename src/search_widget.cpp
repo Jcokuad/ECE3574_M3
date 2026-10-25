@@ -20,30 +20,30 @@ SearchWidget::SearchWidget(QWidget* parent) : QWidget(parent) {
     // TODO: Construct and lay out the Query, Search Results, and Selected Result
     // areas; configure the table/model; connect local events; establish initial state.
 
-    auto* box = new QGroupBox("Query", this);
+    auto* bx = new QGroupBox("Query", this);
 
     // query row
-    query_edit_ = new QLineEdit(box);
+    query_edit_ = new QLineEdit(bx);
     query_edit_->setPlaceholderText("Enter a query");
 
     // number the queries
-    result_count_spin_ = new QSpinBox(box);
+    result_count_spin_ = new QSpinBox(bx);
     result_count_spin_->setRange(1, 100);
     result_count_spin_->setValue(3);
 
-    search_button_ = new QPushButton("Search", box);
+    search_button_ = new QPushButton("Search", bx);
 
     // query field
     auto* query_row = new QHBoxLayout;
-    query_row->addWidget(new QLabel("Query:", box));
+    query_row->addWidget(new QLabel("Query:", bx));
     query_row->addWidget(query_edit_, 1);
-    query_row->addWidget(new QLabel("Results:", box));
+    query_row->addWidget(new QLabel("Results (k)", bx));
     query_row->addWidget(result_count_spin_);
     query_row->addWidget(search_button_);
 
     // results table
     result_model_ = new SearchResultModel(this);
-    results_view_ = new QTableView(box);
+    results_view_ = new QTableView(bx);
     results_view_->setModel(result_model_);
     //clicking selects a row
     results_view_->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -61,38 +61,38 @@ SearchWidget::SearchWidget(QWidget* parent) : QWidget(parent) {
     results_view_->setColumnWidth(1, 160);
 
     auto* res_layout = new QVBoxLayout;
-    res_layout->addWidget(new QLabel("Search Results", box));
+    res_layout->addWidget(new QLabel("Search Results", bx));
     res_layout->addWidget(results_view_);
 
     // selected result
-    selected_result_text_ = new QPlainTextEdit(box);
+    selected_result_text_ = new QPlainTextEdit(bx);
     selected_result_text_->setReadOnly(true);
     selected_result_text_->setPlaceholderText("Select a result to see its details.");
-    view_source_button_ = new QPushButton("View Source", box);
+    view_source_button_ = new QPushButton("View Source", bx);
 
     auto* selected_layout = new QVBoxLayout;
-    selected_layout->addWidget(new QLabel("Selected Result", box));
+    selected_layout->addWidget(new QLabel("Selected Result", bx));
     selected_layout->addWidget(selected_result_text_);
     selected_layout->addWidget(view_source_button_, 0, Qt::AlignRight);
 
     // Table on the Left
     auto* lower_row = new QHBoxLayout;
     lower_row->addLayout(res_layout, 3);
-    lower_row->addLayout(res_layout, 2);
+    lower_row->addLayout(selected_layout, 2);
 
     // Query row on the top
-    auto* bx_layout = new QVBoxLayout(box);
+    auto* bx_layout = new QVBoxLayout(bx);
     bx_layout->addLayout(query_row);
     bx_layout->addLayout(lower_row, 1);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(box);
+    layout->addWidget(bx);
 
     //connect
     connect(search_button_, &QPushButton::clicked, this, &SearchWidget::request_search);
     connect(query_edit_, &QLineEdit::textChanged, this, &SearchWidget::query_changed);
-    connect(results_view_->selectionModel(), &QItemSelectionModel::selectionChanged, this &SearchWidget::show_selected_result);
+    connect(results_view_->selectionModel(), &QItemSelectionModel::selectionChanged, this, &SearchWidget::show_selected_result);
     connect(view_source_button_, &QPushButton::clicked, this, &SearchWidget::request_source_document);
 
     // start state
@@ -102,33 +102,27 @@ SearchWidget::SearchWidget(QWidget* parent) : QWidget(parent) {
 }
 
 QString SearchWidget::query() const {
-    // TODO
     return query_edit_->text();
 }
 
 int SearchWidget::result_count() const {
-    // TODO
     return result_count_spin_->value();
 }
 
 bool SearchWidget::has_query() const {
-    // TODO
     return !query_edit_->text().trimmed().isEmpty();
 }
 
 void SearchWidget::set_search_enabled(bool enabled) {
-    // TODO
     search_button_->setEnabled(enabled);
 }
 
 void SearchWidget::set_results(std::vector<SearchResult> results) {
-    // TODO
     clear_results();
     result_model_->set_results(std::move(results));
 }
 
 void SearchWidget::clear_results() {
-    // TODO
     results_view_->clearSelection();
     result_model_->clear();
     selected_result_text_->clear();
@@ -137,7 +131,6 @@ void SearchWidget::clear_results() {
 }
 
 void SearchWidget::reset() {
-    // TODO
     query_edit_->clear();
     result_count_spin_->setValue(3);
     clear_results();
@@ -145,13 +138,11 @@ void SearchWidget::reset() {
 }
 
 void SearchWidget::request_search() {
-    // TODO
     emit search_requested(query(), result_count());
 }
 
 void SearchWidget::show_selected_result() {
-    // TODO
-    const QModeIndexList rows = results_view_->selectedModel()->selectedRows();
+    const QModelIndexList rows = results_view_->selectionModel()->selectedRows();
     const int row = rows.isEmpty() ? -1 : rows.first().row();
     const SearchResult* res = result_model_->result_at(row);
 

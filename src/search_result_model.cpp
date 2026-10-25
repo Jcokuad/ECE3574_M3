@@ -39,11 +39,11 @@ QVariant SearchResultModel::data(const QModelIndex& index, int role) const {
             return QString::fromStdString(res->document_id);
         case 2: // Chunk
             // qulonglong is Qt's unsigned int type
-            return static_cast<qulonglong>(result->chunk_sequence);
+            return static_cast<qulonglong>(res->chunk_sequence);
         case 3: // Score
-            reutrn QString::number(res->score, 'f', 4);
+            return QString::number(res->score, 'f', 4);
         case 4: // Text: text in the chunk
-            return Qstring::fromStdString(res->text).simplified();
+            return QString::fromStdString(res->text).simplified();
         default:
             return {};
         }
@@ -55,7 +55,7 @@ QVariant SearchResultModel::data(const QModelIndex& index, int role) const {
             return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
         }
         // number columns align to the right
-        return QVariant()(Qt::AlignRight | Qt::AlignVCenter);
+        return QVariant(Qt::AlignRight | Qt::AlignVCenter);
     }
 
     // use defaults for everything else
@@ -98,7 +98,7 @@ void SearchResultModel::clear() {
     // empties the table when results are reset
     beginResetModel();
     results_.clear();
-    endResultModel();
+    endResetModel();
 }
 
 const SearchResult* SearchResultModel::result_at(int row) const noexcept {
